@@ -15,10 +15,10 @@ class IconToggle extends StatefulWidget {
     this.activeColor = Colors.blue,
     this.inactiveColor = Colors.grey,
     this.value = false,
-    this.onChanged,
+    required this.onChanged,
     this.transitionBuilder = _defaultTransitionBuilder,
     this.duration = const Duration(milliseconds: 100),
-    this.reverseDuration,
+    required this.reverseDuration,
   });
   final IconData selectedIconData;
   final IconData unselectedIconData;
@@ -35,8 +35,8 @@ class IconToggle extends StatefulWidget {
 
 class _IconToggleState extends State<IconToggle>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _position;
+  late AnimationController _controller;
+  late Animation<double> _position;
   bool _cancel = false;
 
   @override
@@ -102,10 +102,10 @@ class _IconToggleState extends State<IconToggle>
 
 class _IconToggleable<T> extends AnimatedWidget {
   _IconToggleable({
-    Animation<T> listenable,
-    this.activeColor,
-    this.inactiveColor,
-    this.child,
+    required Animation<T> listenable,
+    required this.activeColor,
+    required this.inactiveColor,
+    required this.child,
   }) : super(listenable: listenable);
   final Color activeColor;
   final Color inactiveColor;
@@ -114,7 +114,7 @@ class _IconToggleable<T> extends AnimatedWidget {
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: _IconPainter(
-        position: listenable,
+        //position: listenable,
         activeColor: activeColor,
         inactiveColor: inactiveColor,
       ),
@@ -125,21 +125,21 @@ class _IconToggleable<T> extends AnimatedWidget {
 
 class _IconPainter extends CustomPainter {
   _IconPainter({
-    @required this.position,
-    this.activeColor,
-    this.inactiveColor,
+    this.position,
+    required this.activeColor,
+    required this.inactiveColor,
   });
-  final Animation<double> position;
+  final Animation<double>? position;
   final Color activeColor;
   final Color inactiveColor;
 
-  double get _value => position != null ? position.value : 0;
+  double get _value => position != null ? position!.value : 0;
 
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..color = Color.lerp(inactiveColor, activeColor, _value)
-          .withOpacity(math.min(_value, 0.15))
+          !.withOpacity(math.min(_value, 0.15))
       ..style = PaintingStyle.fill
       ..strokeWidth = 2.0;
     canvas.drawCircle(
